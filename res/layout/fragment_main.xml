@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     tools:context="com.example.testglass.MainActivity$PlaceholderFragment" >
+    <requestFocus />
 
     <TextView
         android:id="@+id/main_text"

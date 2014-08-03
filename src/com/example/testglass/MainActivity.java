@@ -1,7 +1,6 @@
 package com.example.testglass;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,8 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.os.Build;
 
 public class MainActivity extends Activity {
 
@@ -90,7 +87,6 @@ public class MainActivity extends Activity {
 				Bundle savedInstanceState) {
 			ViewGroup rootView = (ViewGroup) inflater.inflate(
 					R.layout.fragment_main, container, false);
-			rootView.requestFocus(); // require focusable view
 			rootView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
