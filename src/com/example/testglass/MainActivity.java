@@ -118,12 +118,18 @@ public class MainActivity extends Activity {
 				mHandler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
+						if (getActivity() == null) {
+							return;
+						}
 						Log.d("tatdbg", "goToSleep held=" + mWakeLock.isHeld());
 						dimScreen();
 
 						mHandler.postDelayed(new Runnable() {
 							@Override
 							public void run() {
+								if (getActivity() == null) {
+									return;
+								}
 								undimScreen();
 								takePicture();
 							}
@@ -220,6 +226,9 @@ public class MainActivity extends Activity {
 			mHandler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
+					if (getActivity() == null) {
+						return;
+					}
 					takePicture();
 				}
 			}, 1 * 1000);
