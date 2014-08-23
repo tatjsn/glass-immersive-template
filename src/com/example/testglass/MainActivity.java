@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,33 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class MainActivity extends Activity {
-	Camera mCamera;
-
-	private void takePicture() {
-		if (mCamera == null) {
-			mCamera = Camera.open();
-			SurfaceView surface = (SurfaceView) findViewById(R.id.main_surface);
-			try {
-				mCamera.setPreviewDisplay(surface.getHolder());
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			}
-		}
-		mCamera.startPreview();
-		mCamera.takePicture(
-				new Camera.ShutterCallback() {
-					@Override
-					public void onShutter() {
-						Log.d("tatdbg", "onShutter");
-					}
-				}, null, null,
-				new Camera.PictureCallback() {
-					@Override
-					public void onPictureTaken(byte[] data, Camera camera) {
-						Log.d("tatdbg", "onPictureTaken [jpeg]");
-					}
-				});
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +38,6 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (mCamera != null) {
-			mCamera.release();
-			mCamera = null;
-		}
 		Log.d("tatdbg", "onPause");
 	}
 
@@ -113,6 +83,42 @@ public class MainActivity extends Activity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
+		private Camera mCamera;
+		private final Handler mHandler = new Handler();
+
+		private void takePicture() {
+			Log.d("tatdbg", "take picture");
+			if (mCamera == null) {
+				mCamera = Camera.open();
+				SurfaceView surface =
+						(SurfaceView) getView().findViewById(R.id.main_surface);
+				try {
+					mCamera.setPreviewDisplay(surface.getHolder());
+				} catch (IOException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+			mCamera.startPreview();
+			mCamera.takePicture(
+					new Camera.ShutterCallback() {
+						@Override
+						public void onShutter() {
+							Log.d("tatdbg", "onShutter");
+							mHandler.postDelayed(new Runnable() {
+								@Override
+								public void run() {
+									takePicture();
+								}
+							}, 5 * 1000);
+						}
+					}, null, null,
+					new Camera.PictureCallback() {
+						@Override
+						public void onPictureTaken(byte[] data, Camera camera) {
+							Log.d("tatdbg", "onPictureTaken [jpeg]");
+						}
+					});
+		}
 
 		public PlaceholderFragment() {
 		}
@@ -122,15 +128,30 @@ public class MainActivity extends Activity {
 				Bundle savedInstanceState) {
 			ViewGroup rootView = (ViewGroup) inflater.inflate(
 					R.layout.fragment_main, container, false);
-			rootView.setOnClickListener(new View.OnClickListener() {
+//			rootView.setOnClickListener(new View.OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					Log.d("tatdbg", "onclick!!!!");
+//					takePicture();
+//				}
+//			});
+			mHandler.postDelayed(new Runnable() {
 				@Override
-				public void onClick(View v) {
-					Log.d("tatdbg", "onclick!!!!");
-					((MainActivity) getActivity()).takePicture();
+				public void run() {
+					takePicture();
 				}
-			});
+			}, 3 * 1000);
 
 			return rootView;
+		}
+
+		@Override
+		public void onPause() {
+			if (mCamera != null) {
+				mCamera.release();
+				mCamera = null;
+			}
+			super.onPause();
 		}
 	}
 
