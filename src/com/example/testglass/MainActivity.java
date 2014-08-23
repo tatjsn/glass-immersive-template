@@ -1,12 +1,19 @@
 package com.example.testglass;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
@@ -127,6 +134,43 @@ public class MainActivity extends Activity {
 			}
 
 		}
+
+		private class JpegCallback implements Camera.PictureCallback {
+			private String getFileName() {
+				 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US);
+				final String dateTime = sdf.format(Calendar.getInstance().getTime());
+				return "relax-" + dateTime + ".jpg";
+			}
+
+			@Override
+			public void onPictureTaken(byte[] data, Camera camera) {
+				Log.d("tatdbg", "onPictureTaken [jpeg]");
+				File path = Environment.getExternalStoragePublicDirectory(
+						Environment.DIRECTORY_PICTURES);
+				File file = new File(path, getFileName());
+				path.mkdirs();
+				FileOutputStream s = null;
+				try {
+					s = new FileOutputStream(file);
+					s.write(data);
+				} catch (FileNotFoundException e) {
+					// Do nothing
+					throw new IllegalStateException(e);
+				} catch (IOException e) {
+					// Do nothing
+					throw new IllegalStateException(e);
+				} finally {
+					if (s != null) {
+						try {
+							s.close();
+						} catch (IOException e) {
+							// Do nothing
+						}
+					}
+				}
+			}
+		}
+
 		private void takePicture() {
 			Log.d("tatdbg", "take picture");
 			if (mCamera == null) {
@@ -140,13 +184,7 @@ public class MainActivity extends Activity {
 				}
 			}
 			mCamera.startPreview();
-			mCamera.takePicture(new ShutterCallback(), null, null,
-					new Camera.PictureCallback() {
-						@Override
-						public void onPictureTaken(byte[] data, Camera camera) {
-							Log.d("tatdbg", "onPictureTaken [jpeg]");
-						}
-					});
+			mCamera.takePicture(new ShutterCallback(), null, null, new JpegCallback());
 		}
 
 		private PowerManager mPowerManager;
