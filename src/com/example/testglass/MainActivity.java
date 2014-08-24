@@ -10,7 +10,6 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,7 +21,6 @@ import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 public class MainActivity extends Activity {
 
@@ -35,37 +33,6 @@ public class MainActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		Log.d("tatdbg", "onCreate");
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		Log.d("tatdbg", "onDestroy");
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		Log.d("tatdbg", "onPause");
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Log.d("tatdbg", "onResume");
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		Log.d("tatdbg", "onStart");
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		Log.d("tatdbg", "onStop");
 	}
 
 	@Override
@@ -98,13 +65,9 @@ public class MainActivity extends Activity {
 		private class ShutterCallback implements Camera.ShutterCallback {
 			@Override
 			public void onShutter() {
-				Log.d("tatdbg", "onShutter");
 				mHandler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						if (getActivity() == null) {
-							return;
-						}
 						takePicture();
 					}
 				}, 5 * 1000);
@@ -149,17 +112,6 @@ public class MainActivity extends Activity {
 		}
 
 		private void takePicture() {
-			Log.d("tatdbg", "take picture");
-			if (mCamera == null) {
-				mCamera = Camera.open();
-				SurfaceView surface =
-						(SurfaceView) getView().findViewById(R.id.main_surface);
-				try {
-					mCamera.setPreviewDisplay(surface.getHolder());
-				} catch (IOException e) {
-					throw new IllegalStateException(e);
-				}
-			}
 			mCamera.startPreview();
 			mCamera.takePicture(new ShutterCallback(), null, null, new JpegCallback());
 		}
@@ -173,27 +125,33 @@ public class MainActivity extends Activity {
 				Bundle savedInstanceState) {
 			ViewGroup rootView = (ViewGroup) inflater.inflate(
 					R.layout.fragment_main, container, false);
-			// Camera wont work without delay
-			mHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					if (getActivity() == null) {
-						return;
-					}
-					takePicture();
-				}
-			}, 1 * 1000);
+			CameraRetriever.get().request(
+					new CameraRetriever.OnResultListener() {
+						@Override
+						public void onResult(Camera result) {
+							mCamera = result;
+							SurfaceView surface = (SurfaceView) getView()
+									.findViewById(R.id.main_surface);
+							try {
+								mCamera.setPreviewDisplay(surface.getHolder());
+							} catch (IOException e) {
+								throw new IllegalStateException(e);
+							}
+							takePicture();
+						}
+					});
 
 			return rootView;
 		}
 
 		@Override
-		public void onPause() {
+		public void onDestroyView() {
+			mHandler.removeCallbacksAndMessages(null);
+			CameraRetriever.get().cancel();
 			if (mCamera != null) {
 				mCamera.release();
-				mCamera = null;
 			}
-			super.onPause();
+			super.onDestroyView();
 		}
 	}
 
