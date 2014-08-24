@@ -34,7 +34,6 @@ public class MainFragment extends Fragment implements Camera.PictureCallback {
 						startIntervalShutter();
 					}
 				});
-
 		return rootView;
 	}
 
