@@ -1,10 +1,13 @@
 package com.example.testglass;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.google.android.glass.sample.timer.SetTimerActivity;
 
 public class MainActivity extends Activity {
 
@@ -35,8 +38,17 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		switch (item.getItemId()) {
+		case R.id.action_interval:
+			final Intent setTimerIntent = new Intent(this, SetTimerActivity.class);
+
+			setTimerIntent.putExtra(
+					SetTimerActivity.EXTRA_DURATION_MILLIS, 0);
+			//startActivityForResult(setTimerIntent, SET_TIMER);
+			startActivity(setTimerIntent);
+
+			return true;
+		case R.id.action_settings:
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

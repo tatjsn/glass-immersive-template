@@ -3,6 +3,11 @@
     tools:context="com.example.testglass.MainActivity" >
 
     <item
+        android:id="@+id/action_interval"
+        android:title="@string/action_interval"
+        android:icon="@drawable/ic_launcher"/>
+
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:icon="@drawable/ic_launcher"/>

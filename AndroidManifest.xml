@@ -30,6 +30,16 @@
                 android:resource="@xml/voice"
                 />
         </activity>
+
+        <activity
+            android:name="com.google.android.glass.sample.timer.SetTimerActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name="com.google.android.glass.sample.timer.SelectValueActivity"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>
