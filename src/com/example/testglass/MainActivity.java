@@ -15,7 +15,6 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -93,23 +92,8 @@ public class MainActivity extends Activity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
-		private static final String WAKELOCK_TAG = "tag";
 		private Camera mCamera;
 		private final Handler mHandler = new Handler();
-		private float mSavedScreenBrightness;
-
-		private void dimScreen() {
-			WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
-			mSavedScreenBrightness = lp.screenBrightness;
-			lp.screenBrightness = 0;
-			getActivity().getWindow().setAttributes(lp);
-		}
-
-		private void undimScreen() {
-			WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
-			lp.screenBrightness = mSavedScreenBrightness;
-			getActivity().getWindow().setAttributes(lp);
-		}
 
 		private class ShutterCallback implements Camera.ShutterCallback {
 			@Override
@@ -121,22 +105,9 @@ public class MainActivity extends Activity {
 						if (getActivity() == null) {
 							return;
 						}
-						Log.d("tatdbg", "goToSleep held=" + mWakeLock.isHeld());
-						dimScreen();
-
-						mHandler.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								if (getActivity() == null) {
-									return;
-								}
-								undimScreen();
-								takePicture();
-							}
-						}, 5 * 1000);
-
+						takePicture();
 					}
-				}, 1 * 1000);
+				}, 5 * 1000);
 			}
 
 		}
@@ -193,28 +164,8 @@ public class MainActivity extends Activity {
 			mCamera.takePicture(new ShutterCallback(), null, null, new JpegCallback());
 		}
 
-		private PowerManager mPowerManager;
-		private PowerManager.WakeLock mWakeLock;
-
 		public PlaceholderFragment() {
 			setRetainInstance(true);
-		}
-
-		@Override
-		public void onAttach(Activity activity) {
-			super.onAttach(activity);
-			mPowerManager = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
-			mWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
-			mWakeLock.setReferenceCounted(false);
-			// mWakeLock.acquire(); // No meaning in glass app
-			WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
-			mSavedScreenBrightness = lp.screenBrightness;
-		}
-
-		@Override
-		public void onDetach() {
-			super.onDetach();
-			mWakeLock.release();
 		}
 
 		@Override
@@ -238,7 +189,6 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onPause() {
-			Log.d("tatdbg", "pause lock=" + mWakeLock.isHeld());
 			if (mCamera != null) {
 				mCamera.release();
 				mCamera = null;
