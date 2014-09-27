@@ -2,8 +2,14 @@
 <resources>
 
     <string name="app_name">TestGlass</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_interval">Set interval</string>
+    <string name="action_interval_5s">5sec</string>
+    <string name="action_interval_10s">10sec</string>
+    <string name="action_interval_30s">30sec</string>
+    <string name="action_interval_60s">60sec</string>
+    <string name="action_interval_5m">5min</string>
+    <string name="action_interval_10m">10min</string>
+    <string name="action_interval_30m">30min</string>
+    <string name="action_interval_60m">60min</string>
 
     <string name="hours">hours</string>
     <string name="minutes">minutes</string>

@@ -3,13 +3,27 @@
     tools:context="com.example.testglass.MainActivity" >
 
     <item
-        android:id="@+id/action_interval"
-        android:title="@string/action_interval"
-        android:icon="@drawable/ic_launcher"/>
-
+        android:id="@+id/action_interval_5s"
+        android:title="@string/action_interval_5s"/>
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:icon="@drawable/ic_launcher"/>
-
+        android:id="@+id/action_interval_10s"
+        android:title="@string/action_interval_10s"/>
+    <item
+        android:id="@+id/action_interval_30s"
+        android:title="@string/action_interval_30s"/>
+    <item
+        android:id="@+id/action_interval_60s"
+        android:title="@string/action_interval_60s"/>
+    <item
+        android:id="@+id/action_interval_5m"
+        android:title="@string/action_interval_5m"/>
+    <item
+        android:id="@+id/action_interval_10m"
+        android:title="@string/action_interval_10m"/>
+    <item
+        android:id="@+id/action_interval_30m"
+        android:title="@string/action_interval_30m"/>
+    <item
+        android:id="@+id/action_interval_60m"
+        android:title="@string/action_interval_60m"/>
 </menu>

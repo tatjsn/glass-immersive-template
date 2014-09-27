@@ -3,7 +3,6 @@ package com.example.testglass;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,8 +13,6 @@ import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-
-import com.google.android.glass.sample.timer.SetTimerActivity;
 
 public class MainActivity extends Activity implements Camera.PictureCallback {
 	private final Handler mHandler = new Handler();
@@ -79,15 +76,14 @@ public class MainActivity extends Activity implements Camera.PictureCallback {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_interval:
-			final Intent setTimerIntent = new Intent(this, SetTimerActivity.class);
-			setTimerIntent.putExtra(
-					SetTimerActivity.EXTRA_DURATION_MILLIS, 0);
-			//startActivityForResult(setTimerIntent, SET_TIMER);
-			startActivity(setTimerIntent);
-			stopIntervalShutter();
-			return true;
-		case R.id.action_settings:
+		case R.id.action_interval_5s:
+		case R.id.action_interval_10s:
+		case R.id.action_interval_30s:
+		case R.id.action_interval_60s:
+		case R.id.action_interval_5m:
+		case R.id.action_interval_10m:
+		case R.id.action_interval_30m:
+		case R.id.action_interval_60m:
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
