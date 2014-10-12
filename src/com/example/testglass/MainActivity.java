@@ -82,7 +82,7 @@ public class MainActivity extends Activity implements Camera.PictureCallback {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// FIXME Menu disappear after onPause,
-		// interval display will be inconsistent
+		// on-screen interval display will be inconsistent
 		stopIntervalShutter();
 		return super.onPrepareOptionsMenu(menu);
 	}
