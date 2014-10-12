@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">TestGlass</string>
+
     <string name="action_interval_5s">5sec</string>
     <string name="action_interval_10s">10sec</string>
     <string name="action_interval_30s">30sec</string>
@@ -10,6 +10,7 @@
     <string name="action_interval_10m">10min</string>
     <string name="action_interval_30m">30min</string>
     <string name="action_interval_60m">60min</string>
+    <string name="action_interval_stop">Stop</string>
 
     <string name="hours">hours</string>
     <string name="minutes">minutes</string>

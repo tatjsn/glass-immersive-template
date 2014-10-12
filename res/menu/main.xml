@@ -26,4 +26,7 @@
     <item
         android:id="@+id/action_interval_60m"
         android:title="@string/action_interval_60m"/>
+    <item
+        android:id="@+id/action_interval_stop"
+        android:title="@string/action_interval_stop"/>
 </menu>

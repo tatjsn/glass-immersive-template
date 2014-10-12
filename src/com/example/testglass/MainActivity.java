@@ -13,12 +13,15 @@ import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends Activity implements Camera.PictureCallback {
 	private final Handler mHandler = new Handler();
 	private Camera mCamera;
 	private SurfaceHolder mSurfaceHolder;
 	private boolean mSurfaceReady;
+	private TextView mTextInterval;
+	private int mConfigId = R.id.action_interval_5s;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,8 @@ public class MainActivity extends Activity implements Camera.PictureCallback {
 						openOptionsMenu();
 					}
 				});
+		mTextInterval = (TextView) findViewById(R.id.main_interval);
+		mTextInterval.setText(Config.get(mConfigId).stringId);
 	}
 
 	@Override
@@ -73,20 +78,27 @@ public class MainActivity extends Activity implements Camera.PictureCallback {
 		return true;
 	}
 
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		// FIXME Menu disappear after onPause,
+		// interval display will be inconsistent
+		stopIntervalShutter();
+		return super.onPrepareOptionsMenu(menu);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.action_interval_5s:
-		case R.id.action_interval_10s:
-		case R.id.action_interval_30s:
-		case R.id.action_interval_60s:
-		case R.id.action_interval_5m:
-		case R.id.action_interval_10m:
-		case R.id.action_interval_30m:
-		case R.id.action_interval_60m:
-			return true;
+		int itemId = item.getItemId();
+		Config config = Config.get(itemId);
+		if (config == null) {
+			return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
+		mConfigId = itemId;
+		mTextInterval.setText(Config.get(mConfigId).stringId);
+		// TODO Check if both surface and camera are ready
+		startIntervalShutterIfReady();
+		return true;
 	}
 
 	@Override
@@ -99,7 +111,7 @@ public class MainActivity extends Activity implements Camera.PictureCallback {
 				mCamera.startPreview();
 				mCamera.takePicture(null, null, null, MainActivity.this);
 			}
-		}, 5 * 1000);
+		}, Config.get(mConfigId).interval);
 		new AsyncTask<byte[], Void, Void>() {
 			@Override
 			protected Void doInBackground(byte[]... params) {
@@ -110,10 +122,15 @@ public class MainActivity extends Activity implements Camera.PictureCallback {
 	}
 
 	private void startIntervalShutterIfReady() {
+		if (Config.get(mConfigId).interval <= 0) {
+			// O means stop interval
+			return;
+		}
 		if (!mSurfaceReady || mCamera == null) {
 			return;
 		}
-		Log.d("tatdbg", "start interval");
+		Log.d("tatdbg", "start interval "
+				+ getResources().getString(Config.get(mConfigId).stringId));
 		try {
 			mCamera.setPreviewDisplay(mSurfaceHolder);
 		} catch (IOException e) {
@@ -124,6 +141,9 @@ public class MainActivity extends Activity implements Camera.PictureCallback {
 	}
 
 	private void stopIntervalShutter() {
+		Log.d("tatdbg", "stop interval "
+				+ getResources().getString(Config.get(mConfigId).stringId));
+		// TODO Cancel surface initialize callback
 		CameraRetriever.get().cancel();
 		mHandler.removeCallbacksAndMessages(null);
 		if (mCamera != null) {
