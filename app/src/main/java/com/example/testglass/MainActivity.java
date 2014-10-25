@@ -115,7 +115,7 @@ public class MainActivity extends Activity implements Camera.PictureCallback {
 		new AsyncTask<byte[], Void, Void>() {
 			@Override
 			protected Void doInBackground(byte[]... params) {
-				PictureUtils.saveToFile(params[0]);
+				PictureUtils.saveToFile(MainActivity.this, params[0]);
 				return null;
 			}
 		}.execute(data);
